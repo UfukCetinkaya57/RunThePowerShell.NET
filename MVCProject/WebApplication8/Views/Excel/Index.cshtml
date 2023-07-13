@@ -1,0 +1,111 @@
+﻿@using WebApplication8.Entities;
+@model DataInfoViewModel
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<html>
+    <head>
+
+    </head>
+    <body>
+
+    <h1>Hello World!!</h1>
+
+    <button onclick="changeStatus();">
+        Veri girişi için butona basın
+    </button>
+    <button onclick="changeStatus2();">Excel dosyası yüklemek için butona basın </button>
+   
+    <div class="text-center file-entry" style="display: none;">
+
+        <input class="input1"/>
+        <button class="form1" type="submit">Save</button>
+    </div>
+
+    <div class="text-center data-entry" style="display: none;">
+        <h1 class="display-4">Import Excel</h1>
+            <input type="file" name="file" class="input2" id="input2" />
+            <button type="submit" class="btn btn-primary form2">Import Excel</button>
+    </div>
+
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $(".form1").click(function (e) {
+                var x = confirm("Siteye giriş yapmak istediginize emin misiniz?");
+                //var data = JSON.stringify({
+                //    DataInfo: 
+                //});
+                // //Confirmation window 
+                //Solda satır numaraları olsun +
+                //TESTE ZAMAN AYIR PLAN ÇIKAR . Proje planı çıkart proje başlangıcı . ne zaman ne zamana yapılacak. teste de zaman kalsın. 2 günde 1 kontrol 5 gün de exchange e ayır
+                //Git hesabı aç repo tanımla ve kodu repoya at, Her değişiklik commit edilsin
+                if (x) {
+                var data = {
+                    siteLink: $(".input1").val()
+                }
+                
+                $.ajax({
+                    url: ("/Excel/RunStartThePowershellWithDataFile" /*+ $(".input1").val()*/),
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    dataType: 'json',
+                    contentType: 'application/json',
+
+                    success: function (data) {
+                        alert("Success")
+                    },
+                    error: function (hata, ajaxOptions, thrownError) {
+                        alert(hata.status);
+                        alert(thrownError);
+                        alert(hata.responseText);
+                    }
+                });
+                console.log($.trim($('.input1').val()));
+            }
+
+                e.preventDefault();
+            });
+
+            $(".form2").click(function (e) {
+                var x = confirm("Excel dosyasını yüklemek  istediginize emin misiniz?");
+                if(x){
+
+                
+                var formData = new FormData();
+                var uploadFiles = document.getElementById('input2').files;
+                console.log(formData);
+
+                formData.append("file", uploadFiles[0]);
+                $.ajax({
+                    type: "POST",
+                    url: 'Excel/RunStartThePowershellWithEntryFile',
+                    data: formData,
+                    dataType: 'json',
+                    contentType: false,
+                    processData: false,
+                    //complete: this.onComplete.bind(this)
+                });
+                e.preventDefault();
+                }
+            });
+        });
+        function changeStatus(e) {
+            $('.file-entry').show();
+            $('.data-entry').hide();
+        }
+
+        //$("button").click(function (event) {
+        //    event.preventDefault();
+        //});
+        
+        function changeStatus2() {
+            $('.data-entry').show();
+            $('.file-entry').hide();
+        };
+    </script>
+    </body>
+</html>
